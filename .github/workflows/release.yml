@@ -22,7 +22,7 @@ jobs:
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v5
         id: release
         with:
           config-file: .github/release-please-config.json
@@ -41,11 +41,11 @@ jobs:
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.release-please.outputs.tag_name }}
           fetch-depth: 0
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
           cache: true
@@ -54,7 +54,7 @@ jobs:
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
+        uses: goreleaser/goreleaser-action@v7
         with:
           version: "~> v2"
           args: release --clean
