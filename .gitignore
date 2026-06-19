@@ -1,0 +1,17 @@
+# Binaries
+/foyer
+*.exe
+*.test
+
+# GoReleaser
+/dist/
+
+# Coverage
+*.out
+coverage.txt
+
+# Local config / scratch
+*.local.toml
+/.idea/
+/.vscode/
+.DS_Store

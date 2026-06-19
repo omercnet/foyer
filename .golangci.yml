@@ -1,0 +1,78 @@
+# Strict golangci-lint v2 configuration.
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  # Start from the standard set (errcheck, govet, ineffassign, staticcheck,
+  # unused) and add a strict selection on top.
+  default: standard
+  enable:
+    - bodyclose
+    - copyloopvar
+    - dupl
+    - errorlint
+    - gocheckcompilerdirectives
+    - gocritic
+    - gocyclo
+    - goconst
+    - godot
+    - gosec
+    - misspell
+    - nakedret
+    - nilerr
+    - nolintlint
+    - prealloc
+    - predeclared
+    - revive
+    - unconvert
+    - unparam
+    - whitespace
+  settings:
+    gocyclo:
+      min-complexity: 15
+    goconst:
+      ignore-tests: true
+    govet:
+      enable-all: true
+      disable:
+        # fieldalignment optimizes struct padding; the Go team notes it is
+        # rarely worth the readability cost, so we keep fields in logical order.
+        - fieldalignment
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+    revive:
+      rules:
+        - name: exported
+        - name: var-naming
+        - name: context-as-argument
+        - name: error-return
+        - name: error-strings
+        - name: errorf
+        - name: indent-error-flow
+        - name: unreachable-code
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - std-error-handling
+    rules:
+      # Tests may duplicate fixtures, ignore some errors, and be more complex.
+      - path: _test\.go
+        linters:
+          - dupl
+          - errcheck
+          - gocyclo
+          - goconst
+          - gosec
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/omercnet/foyer

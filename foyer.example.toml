@@ -1,0 +1,38 @@
+# Foyer configuration — every key is OPTIONAL.
+#
+# Foyer works with no config at all: it auto-detects your default interface,
+# the DHCP-advertised DNS server, and an installed Chromium-family browser.
+# Copy this file to $XDG_CONFIG_HOME/foyer/config.toml (or
+# ~/.config/foyer/config.toml) and uncomment only what you want to override.
+
+# Loopback address the local SOCKS5 proxy listens on.
+# Default: an ephemeral port ("127.0.0.1:0"), which avoids port-in-use errors.
+# socks5-addr = "127.0.0.1:1666"
+
+# Network interface to query (and bind to, if bind-device is set).
+# Default: the interface backing the default route (e.g. en0 / wlan0).
+# interface = "en0"
+
+# Shell command whose first IPv4 output line is taken as the captive DNS server.
+# Default (macOS):  ipconfig getoption en0 domain_name_server
+# Default (Linux):  resolvectl dns <iface> || nmcli -g IP4.DNS device show <iface>
+# dhcp-dns = "ipconfig getoption en0 domain_name_server"
+
+# Shell command to launch the browser. $PROXY is exported as the SOCKS5 address.
+# Default: auto-detect Chrome/Chromium/Brave/Edge and open a throwaway,
+# incognito, proxied window that is deleted on exit.
+# browser = """
+#   open -n -W -a "Google Chrome" --args \
+#     --user-data-dir="$(mktemp -d)" \
+#     --proxy-server="socks5://$PROXY" \
+#     --host-resolver-rules="MAP * ~NOTFOUND , EXCLUDE localhost" \
+#     --no-first-run --new-window --incognito \
+#     http://example.com
+# """
+
+# First page to open; any plain-HTTP URL triggers the portal's redirect.
+# start-url = "http://example.com"
+
+# Bind all outbound sockets (including DNS) to `interface`. Linux only; needs
+# CAP_NET_RAW (root). Useful when interface address spaces collide.
+# bind-device = false

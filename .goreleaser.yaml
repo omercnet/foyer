@@ -1,0 +1,71 @@
+# GoReleaser configuration. https://goreleaser.com
+version: 2
+
+project_name: foyer
+
+before:
+  hooks:
+    - go mod tidy
+    - go mod download
+
+builds:
+  - id: foyer
+    binary: foyer
+    main: .
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X main.version={{ .Version }}
+      - -X main.commit={{ .Commit }}
+      - -X main.date={{ .Date }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - id: foyer
+    formats:
+      - tar.gz
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    files:
+      - README.md
+      - LICENSE
+      - foyer.example.toml
+
+checksum:
+  name_template: "checksums.txt"
+
+sboms:
+  - id: archive
+    artifacts: archive
+
+# Keyless signing of the checksum file via cosign + GitHub OIDC.
+signs:
+  - id: cosign
+    cmd: cosign
+    certificate: "${artifact}.pem"
+    signature: "${artifact}.sig"
+    args:
+      - sign-blob
+      - "--output-certificate=${certificate}"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - "--yes"
+    artifacts: checksum
+    output: true
+
+# release-please owns the GitHub Release and its changelog; GoReleaser only
+# uploads artifacts onto the release it already created.
+release:
+  mode: keep-existing
+
+changelog:
+  disable: true
